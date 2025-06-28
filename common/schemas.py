@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import Literal, Annotated
+from typing import Annotated
 from pydantic import BaseModel, conint, Field
 from fastapi import status, Path
 
@@ -43,13 +43,12 @@ class RequestModel(BaseModel):
 
 
 class ResponseModel(BaseModel):
-    # TODO: Проверить модели
-    code: Literal[200]
+    code: int = Field(examples=[status.HTTP_200_OK])
     message: str = Field(examples=["success"])
 
 
 class ErrorModel(BaseModel):
-    code: int = Field(examples=[500])
+    code: int = Field(examples=[status.HTTP_500_INTERNAL_SERVER_ERROR])
     message: str = Field(examples=["Internal provisioning exception"])
 
 
