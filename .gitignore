@@ -14,3 +14,6 @@ wheels/
 
 # SQlite files
 *.db
+
+# Environment settings
+.env

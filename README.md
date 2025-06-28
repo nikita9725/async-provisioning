@@ -15,6 +15,12 @@
 ### Установка uv
 Инcтрукция по установке менеджера пакетов uv доступна [ссылке](https://docs.astral.sh/uv/getting-started/installation/#installation-methods)
 
+### Установка .env файла
+Сначала копируется файл .env.example, затем в случае необходимости подставляются нужные параметры
+```bash
+cp .env.example .env
+```
+
 ###  Сервис A
 Сервис А запускается командой `uv run main.py service-a`
 Опции: 
