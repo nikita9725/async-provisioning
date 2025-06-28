@@ -1,7 +1,7 @@
 import asyncio
 import random
 import uvicorn
-from fastapi import FastAPI, Path, HTTPException, status
+from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 from common.schemas import ResponseModel, ErrorModel, RequestModel, Serial
 
@@ -36,8 +36,8 @@ app = FastAPI(
 )
 async def configure_device(
     body: RequestModel,
-    id: Serial = Path(..., title="Серийный номер"),
-):
+    id: Serial,
+) -> JSONResponse:
     """
     Эндпоинт имитирует **долгое** конфигурирование устройства.
     В 10 % случаев отдаёт *500*, в 5 % — *404*.
