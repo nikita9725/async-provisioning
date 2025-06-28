@@ -74,7 +74,7 @@ requires-dist = [
     { name = "aiosqlite", specifier = "==0.21.0" },
     { name = "alembic", specifier = "==1.16.2" },
     { name = "fastapi", specifier = "==0.115.14" },
-    { name = "greenlet", specifier = ">=3.2.3" },
+    { name = "greenlet", specifier = "==3.2.3" },
     { name = "pydantic-settings", specifier = "==2.10.1" },
     { name = "sqlalchemy", specifier = "==2.0.41" },
     { name = "uvicorn", specifier = "==0.34.3" },

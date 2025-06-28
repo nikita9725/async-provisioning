@@ -1,8 +1,21 @@
 from enum import StrEnum
-from typing import Literal
-from pydantic import BaseModel, constr, conint, Field
+from typing import Literal, Annotated
+from pydantic import BaseModel, conint, Field
+from fastapi import status, Path
 
-Serial = constr(pattern=r"^[a-zA-Z0-9]{6,}$")
+
+Serial = Annotated[
+    str,
+    Path(
+        description="Серийный номер оборудования",
+        pattern=r"^[A-Za-z0-9]{6,}$",
+    ),
+]
+
+
+class CreateTaskResponse(BaseModel):
+    code: int = Field(..., examples=[status.HTTP_201_CREATED])
+    task_id: int = Field(..., examples=[42])
 
 
 class ConnectionParameters(BaseModel):
@@ -30,6 +43,7 @@ class RequestModel(BaseModel):
 
 
 class ResponseModel(BaseModel):
+    # TODO: Проверить модели
     code: Literal[200]
     message: str = Field(examples=["success"])
 
@@ -37,6 +51,7 @@ class ResponseModel(BaseModel):
 class ErrorModel(BaseModel):
     code: int = Field(examples=[500])
     message: str = Field(examples=["Internal provisioning exception"])
+
 
 class TaskStatus(StrEnum):
     CREATED = "CREATED"
