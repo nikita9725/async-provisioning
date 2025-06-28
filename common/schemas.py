@@ -1,3 +1,4 @@
+from enum import StrEnum
 from typing import Literal
 from pydantic import BaseModel, constr, conint, Field
 
@@ -36,3 +37,10 @@ class ResponseModel(BaseModel):
 class ErrorModel(BaseModel):
     code: int = Field(examples=[500])
     message: str = Field(examples=["Internal provisioning exception"])
+
+class TaskStatus(StrEnum):
+    CREATED = "CREATED"
+    QUEUED = "QUEUED"
+    RUNNING = "RUNNING"
+    SUCCESS = "SUCCESS"
+    FAILED = "FAILED"
