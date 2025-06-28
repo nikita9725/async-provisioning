@@ -47,11 +47,6 @@ class ResponseModel(BaseModel):
     message: str = Field(examples=["success"])
 
 
-class ErrorModel(BaseModel):
-    code: int = Field(examples=[status.HTTP_500_INTERNAL_SERVER_ERROR])
-    message: str = Field(examples=["Internal provisioning exception"])
-
-
 class TaskStatus(StrEnum):
     CREATED = "CREATED"
     QUEUED = "QUEUED"
