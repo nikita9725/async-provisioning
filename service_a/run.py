@@ -1,3 +1,4 @@
+import asyncio
 import random
 import uvicorn
 from fastapi import FastAPI, Path, HTTPException, status
@@ -41,7 +42,7 @@ async def configure_device(
     Эндпоинт имитирует **долгое** конфигурирование устройства.
     В 10 % случаев отдаёт *500*, в 5 % — *404*.
     """
-    # await asyncio.sleep(60)
+    await asyncio.sleep(60)
     if random.random() < 0.1:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
