@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   rabbitmq:
     image: "docker.io/bitnami/rabbitmq:3.12.13-debian-12-r2"
@@ -18,3 +16,81 @@ services:
       - "RABBITMQ_USERNAME=${RMQ_USER}"
       - "RABBITMQ_PASSWORD=${RMQ_PASS}"
       - "RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true"
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: "30s"
+      timeout: "10s"
+      retries: "5"
+      start_period: "30s"
+    networks: &networks
+      - "provisioning-service-network"
+
+  service-a:
+    build: &build
+      context: "."
+    image: "localhost/async-provisioning:test"
+    container_name: "service-a"
+    depends_on:
+      rabbitmq:
+        condition: "service_healthy"
+    env_file: ".env"
+    command: ["python3", "main.py", "service-a", "--port", "${PROVISIONING_SERVICE_PORT}"]
+    environment: &environment
+      - "PROVISIONING_SERVICE_URL=http://service-a:${PROVISIONING_SERVICE_PORT}"
+      - "RMQ_HOST=rabbitmq"
+      - "RMQ_URL=amqp://${RMQ_USER}:${RMQ_PASS}@rabbitmq:${RMQ_PORT}/"
+    networks: *networks
+    volumes: &volumes
+      - "${DB_FILE_PATH}:/app/tasks.db"
+    ports:
+      - "${PROVISIONING_SERVICE_PORT}:${PROVISIONING_SERVICE_PORT}"
+
+  service-b:
+    build: *build
+    image: "localhost/async-provisioning:test"
+    container_name: "service-b"
+    depends_on:
+      service-a:
+        condition: "service_started"
+    env_file: ".env"
+    command: >
+      sh -c "
+      alembic upgrade head &&
+      python main.py service-b --port ${SERVICE_B_PORT}"
+    environment: *environment
+    networks: *networks
+    volumes: *volumes
+    ports:
+      - "${SERVICE_B_PORT}:${SERVICE_B_PORT}"
+      - "${SERVICE_B_PORT}:${SERVICE_B_PORT}"
+
+  worker:
+    build: *build
+    image: "localhost/async-provisioning:test"
+    container_name: "worker"
+    restart: "always"
+    depends_on:
+      service-b:
+        condition: "service_started"
+    env_file: ".env"
+    command: ["python", "main.py", "worker"]
+    environment: *environment
+    networks: *networks
+    volumes: *volumes
+
+  task-status-refresher:
+    build: *build
+    image: "localhost/async-provisioning:test"
+    container_name: "task-status-refresher"
+    depends_on:
+      worker:
+        condition: "service_started"
+    env_file: ".env"
+    command: ["python", "main.py", "task-status-refresher"]
+    environment: *environment
+    networks: *networks
+    volumes: *volumes
+
+networks:
+  provisioning-service-network:
+    driver: "bridge"
