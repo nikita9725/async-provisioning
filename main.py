@@ -1,6 +1,8 @@
 import click
 from service_a.run import run_service as run_service_a
 from service_b.run import run_service as run_service_b
+from worker.run import run_service as run_worker
+from task_status_refresher.run import run_service as run_task_status_refresher
 
 
 @click.group()
@@ -26,6 +28,12 @@ def service_b(port: int) -> None:
 def worker() -> None:
     """Запуск consumer worker."""
     run_worker()
+
+
+@cli.command()
+def task_status_refresher() -> None:
+    """Запуск сервиса, который обновляет статусы 'зависших задач'"""
+    run_task_status_refresher()
 
 
 if __name__ == "__main__":
