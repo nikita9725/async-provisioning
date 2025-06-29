@@ -22,5 +22,11 @@ def service_b(port: int) -> None:
     run_service_b(port)
 
 
+@cli.command()
+def worker() -> None:
+    """Запуск consumer worker."""
+    run_worker()
+
+
 if __name__ == "__main__":
     cli()

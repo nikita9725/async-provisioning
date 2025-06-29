@@ -19,8 +19,6 @@ class Task(Base):
     )
     payload: Mapped[dict] = mapped_column(JSON)
     status: Mapped[TaskStatus] = mapped_column(
-        Enum(TaskStatus), default=TaskStatus.CREATED
-    )
         Enum(TaskStatus), default=TaskStatus.RUNNING
     )
 
@@ -37,6 +35,18 @@ class Task(Base):
             .values(status=status)
         )
 
+    @classmethod
+    def refresh_task_status_query(
+        cls, initial_status: TaskStatus, new_status: TaskStatus, timeout: int
+    ) -> Update:
+        return (
+            update(cls)
+            .where(
+                cls.created_at - dt.datetime.now() <= timeout,
+                cls.status == initial_status,
+            )
+            .values(status=new_status)
+        )
 
 
 engine = create_async_engine(settings.db_url, echo=False)
