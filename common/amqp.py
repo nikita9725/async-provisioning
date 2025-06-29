@@ -41,7 +41,9 @@ class QueueConsumerBase(ABC):
         async with message.process(requeue=True):
             message_json = json.loads(message.body)
             await self.process_message(message_json)
-        self._logger.info(f"{self.__class__.__name__} message processed: {message_json}")
+        self._logger.info(
+            f"{self.__class__.__name__} message processed: {message_json}"
+        )
 
 
 class QueueProducer:
