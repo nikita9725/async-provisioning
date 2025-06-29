@@ -7,6 +7,7 @@ from common.logger import get_logger
 
 logger = get_logger()
 
+
 async def refresh_statuses() -> None:
     logger.info("Refreshing statuses worker started")
     while True:

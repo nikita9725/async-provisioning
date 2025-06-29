@@ -37,7 +37,8 @@ class WorkerQueueConsumer(QueueConsumerBase):
     async def _send_provisioning_request(message: RequestModelMsg) -> ResponseModel:
         async with httpx.AsyncClient(timeout=settings.read_timeout) as client:
             response = await client.post(
-                settings.provisioning_service_url + f"/api/v1/equipment/cpe/{message.equipment_id}",
+                settings.provisioning_service_url
+                + f"/api/v1/equipment/cpe/{message.equipment_id}",
                 json=message.model_dump(),
             )
             print(response.json())
