@@ -39,6 +39,9 @@ cp .env.example .env
 ###  Сервис Task Status Refresher
 Сервис А запускается командой `uv run main.py task-status-refresher`
 
+## Запуск через docker-compose
+Для запуска в docker-compose нужно воспользоваться командой `docker-compose up -d`
+
 ## Запуск линтера и форматтера
 Запустить линтер и форматтер ruff можно следующими командами
 ```bash
