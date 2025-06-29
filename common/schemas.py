@@ -30,7 +30,7 @@ class ConnectionParameters(BaseModel):
 class RequestModel(BaseModel):
     """Запрос к оборудованию."""
 
-    timeoutInSeconds: conint(gt=0, lt=60) = Field(
+    timeout_in_seconds: conint(gt=0, lt=60) = Field(
         ..., examples=[14], description="Время ожидания ответа от оборудования"
     )
     parameters: ConnectionParameters = Field(
@@ -42,14 +42,17 @@ class RequestModel(BaseModel):
     )
 
 
+class RequestModelMsg(RequestModel):
+    equipment_id: str
+    task_id: int
+
+
 class ResponseModel(BaseModel):
     code: int = Field(examples=[status.HTTP_200_OK])
     message: str = Field(examples=["success"])
 
 
 class TaskStatus(StrEnum):
-    CREATED = "CREATED"
-    QUEUED = "QUEUED"
     RUNNING = "RUNNING"
     SUCCESS = "SUCCESS"
     FAILED = "FAILED"

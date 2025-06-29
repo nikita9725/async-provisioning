@@ -1,8 +1,8 @@
 """create tasks table
 
-Revision ID: 2137aafe2a03
+Revision ID: cbfc6dd56cb8
 Revises:
-Create Date: 2025-06-28 17:10:40.984875
+Create Date: 2025-06-29 10:47:42.563888
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "2137aafe2a03"
+revision: str = "cbfc6dd56cb8"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,9 +30,7 @@ def upgrade() -> None:
         sa.Column("payload", sa.JSON(), nullable=False),
         sa.Column(
             "status",
-            sa.Enum(
-                "CREATED", "QUEUED", "RUNNING", "SUCCESS", "FAILED", name="taskstatus"
-            ),
+            sa.Enum("RUNNING", "SUCCESS", "FAILED", name="taskstatus"),
             nullable=False,
         ),
         sa.PrimaryKeyConstraint("id"),

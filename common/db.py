@@ -1,7 +1,8 @@
 import datetime as dt
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
-from sqlalchemy import DateTime, JSON, Enum, Integer, String
+from sqlalchemy.sql import Update
+from sqlalchemy import DateTime, JSON, Enum, Integer, String, update
 from .schemas import TaskStatus
 from .settings import settings
 
@@ -20,6 +21,22 @@ class Task(Base):
     status: Mapped[TaskStatus] = mapped_column(
         Enum(TaskStatus), default=TaskStatus.CREATED
     )
+        Enum(TaskStatus), default=TaskStatus.RUNNING
+    )
+
+    @classmethod
+    def update_task_status_query(
+        cls,
+        task_id: int,
+        equipment_id: str,
+        status: TaskStatus,
+    ) -> Update:
+        return (
+            update(cls)
+            .where(cls.id == task_id, cls.equipment_id == equipment_id)
+            .values(status=status)
+        )
+
 
 
 engine = create_async_engine(settings.db_url, echo=False)
