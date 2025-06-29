@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  rabbitmq:
+    image: "docker.io/bitnami/rabbitmq:3.12.13-debian-12-r2"
+    container_name: "rabbitmq"
+    ports:
+      - "4369:4369"
+      - "5551:5551"
+      - "5552:5552"
+      - "5672:${RMQ_PORT}"
+      - "25672:25672"
+      - "15672:15672"
+    env_file:
+      - ".env"
+    environment:
+      - "RABBITMQ_ERL_COOKIE=AEEENAENWQRRQNB"
+      - "RABBITMQ_USERNAME=${RMQ_USER}"
+      - "RABBITMQ_PASSWORD=${RMQ_PASS}"
+      - "RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true"

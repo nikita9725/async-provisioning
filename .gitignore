@@ -11,3 +11,9 @@ wheels/
 
 # IDE files
 .idea/
+
+# SQlite files
+*.db
+
+# Environment settings
+.env

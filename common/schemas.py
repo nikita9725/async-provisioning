@@ -1,7 +1,21 @@
-from typing import Literal
-from pydantic import BaseModel, constr, conint, Field
+from enum import StrEnum
+from typing import Annotated
+from pydantic import BaseModel, conint, Field
+from fastapi import status, Path
 
-Serial = constr(pattern=r"^[a-zA-Z0-9]{6,}$")
+
+Serial = Annotated[
+    str,
+    Path(
+        description="Серийный номер оборудования",
+        pattern=r"^[A-Za-z0-9]{6,}$",
+    ),
+]
+
+
+class CreateTaskResponse(BaseModel):
+    code: int = Field(..., examples=[status.HTTP_201_CREATED])
+    task_id: int = Field(..., examples=[42])
 
 
 class ConnectionParameters(BaseModel):
@@ -16,7 +30,7 @@ class ConnectionParameters(BaseModel):
 class RequestModel(BaseModel):
     """Запрос к оборудованию."""
 
-    timeoutInSeconds: conint(gt=0, lt=60) = Field(
+    timeout_in_seconds: conint(gt=0, lt=60) = Field(
         ..., examples=[14], description="Время ожидания ответа от оборудования"
     )
     parameters: ConnectionParameters = Field(
@@ -28,11 +42,17 @@ class RequestModel(BaseModel):
     )
 
 
+class RequestModelMsg(RequestModel):
+    equipment_id: str
+    task_id: int
+
+
 class ResponseModel(BaseModel):
-    code: Literal[200]
+    code: int = Field(examples=[status.HTTP_200_OK])
     message: str = Field(examples=["success"])
 
 
-class ErrorModel(BaseModel):
-    code: int = Field(examples=[500])
-    message: str = Field(examples=["Internal provisioning exception"])
+class TaskStatus(StrEnum):
+    RUNNING = "RUNNING"
+    SUCCESS = "SUCCESS"
+    FAILED = "FAILED"

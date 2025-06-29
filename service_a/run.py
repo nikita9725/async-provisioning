@@ -1,8 +1,9 @@
+import asyncio
 import random
 import uvicorn
-from fastapi import FastAPI, Path, HTTPException, status
+from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
-from common.schemas import ResponseModel, ErrorModel, RequestModel, Serial
+from common.schemas import ResponseModel, RequestModel, Serial
 
 tags_metadata = [
     {
@@ -29,19 +30,19 @@ app = FastAPI(
     summary="Запуск конфигурирования оборудования",
     response_model=ResponseModel,
     responses={
-        404: {"model": ErrorModel, "description": "Equipment not found"},
-        500: {"model": ErrorModel, "description": "Internal error"},
+        status.HTTP_404_NOT_FOUND: {"model": ResponseModel, "description": "Equipment not found"},
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {"model": ResponseModel, "description": "Internal error"},
     },
 )
 async def configure_device(
     body: RequestModel,
-    id: Serial = Path(..., title="Серийный номер"),
-):
+    id: Serial,
+) -> JSONResponse:
     """
     Эндпоинт имитирует **долгое** конфигурирование устройства.
     В 10 % случаев отдаёт *500*, в 5 % — *404*.
     """
-    # await asyncio.sleep(60)
+    await asyncio.sleep(60)
     if random.random() < 0.1:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
