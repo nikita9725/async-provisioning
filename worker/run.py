@@ -41,7 +41,6 @@ class WorkerQueueConsumer(QueueConsumerBase):
                 + f"/api/v1/equipment/cpe/{message.equipment_id}",
                 json=message.model_dump(),
             )
-            print(response.json())
             return ResponseModel(**response.json())
 
 
